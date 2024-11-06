@@ -1,16 +1,25 @@
 package android.paba.listview
 
+import android.annotation.SuppressLint
+import android.app.DownloadManager.Query
 import android.os.Bundle
+import android.paba.listview.databinding.ActivityMainBinding
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.FragmentActivity
 
 class MainActivity : AppCompatActivity() {
+    @SuppressLint("MissingInflatedId")
+    @RequiresApi(35)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -20,6 +29,10 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+//        kalo pake binding jangan lupa di build gradle nya di ubah
+        val _binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(_binding.root)
 
         var data = mutableListOf<String>()
 
@@ -52,6 +65,18 @@ class MainActivity : AppCompatActivity() {
             lvAdapter.notifyDataSetChanged()
         }
 
+        _binding.searchvw.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                lvAdapter.getFilter().filter(query)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                lvAdapter.getFilter().filter(newText)
+                return false
+            }
+        })
 
     }
 }
+
